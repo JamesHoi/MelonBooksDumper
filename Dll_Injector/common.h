@@ -28,7 +28,7 @@ string BrowseFolder()
 	TCHAR path[MAX_PATH];
 
 	BROWSEINFO bi = { 0 };
-	bi.lpszTitle = ("Ñ¡Ôñ±£´æÍ¼Æ¬Â·¾¶");
+	bi.lpszTitle = ("Browse for save folder...");
 	bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
 	bi.lpfn = BrowseCallbackProc;
 
