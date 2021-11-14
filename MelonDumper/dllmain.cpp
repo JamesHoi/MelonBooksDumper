@@ -3,12 +3,14 @@
 #include "pch.h"
 #include "detours.h"
 #pragma comment(lib, "detours.lib")
+#pragma comment(lib, "version.lib")
 #include <iostream>
 #include <Psapi.h> // To get process info
 #include <process.h>
 #include <stdlib.h>
 
-#define AttachRVA 0x205AF
+#define AttachRVA_v110 0x205AF
+#define AttachRVA_v120 0x23FDF
 DWORD BaseAddr = 0;
 using namespace std;
 int pic_count = 1;
@@ -89,11 +91,50 @@ DWORD GetBaseAddress(DWORD processID) {
 	return (DWORD)lphModule[0]; // Module 0 is apparently always the EXE itself, returning its address
 }
 
+int GetFileVersion(char *filename, char* ver)
+{
+	DWORD dwHandle, sz = GetFileVersionInfoSizeA(filename, &dwHandle);
+	if (0 == sz)
+	{
+		return 1;
+	}
+	char* buf = new char[sz];
+	if (!GetFileVersionInfoA(filename, dwHandle, sz, &buf[0]))
+	{
+		delete[] buf;
+		return 2;
+	}
+	VS_FIXEDFILEINFO* pvi;
+	sz = sizeof(VS_FIXEDFILEINFO);
+	if (!VerQueryValueA(&buf[0], "\\", (LPVOID*)&pvi, (unsigned int*)&sz))
+	{
+		delete[] buf;
+		return 3;
+	}
+	sprintf(ver, "%d.%d.%d.%d"
+		, pvi->dwProductVersionMS >> 16
+		, pvi->dwFileVersionMS & 0xFFFF
+		, pvi->dwFileVersionLS >> 16
+		, pvi->dwFileVersionLS & 0xFFFF
+	);
+	delete[] buf;
+	return 0;
+}
+
+DWORD GetAttachRVA(char *v) {
+	string ver = v;
+	if (ver == "1.1.0.0")return AttachRVA_v110;
+	else if (ver == "1.2.0.0")return AttachRVA_v120;
+	else return 0xFFFFFFFF;
+}
 
 void Init() {
 	int iPid = (int)_getpid();
 	BaseAddr = GetBaseAddress(iPid);
-	attached_pointer = (void*)(BaseAddr + AttachRVA);
+	char ver[] = "x.x.x.x"; char exeFullPath[MAX_PATH];
+	GetModuleFileName(NULL, exeFullPath, MAX_PATH);
+	int rt = GetFileVersion(exeFullPath,ver);
+	attached_pointer = (void*)(BaseAddr+GetAttachRVA(ver));
 	path = get_global_path();
 }
 
