@@ -1,3 +1,4 @@
+[中文说明](README-CN.md)  
 # MelonBooksDumper
  a dumper for melonbooksviewer on pc.
 
