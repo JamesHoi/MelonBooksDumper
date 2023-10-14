@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #define _CRT_SECURE_NO_DEPRECATE
 #define _CRT_SECURE_NO_WARNING
 
@@ -23,13 +23,14 @@ static int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPAR
 	return 0;
 }
 
-string BrowseFolder()
+string BrowseFolder(const char* initialPath)
 {
 	TCHAR path[MAX_PATH];
 
 	BROWSEINFO bi = { 0 };
 	bi.lpszTitle = ("Browse for save folder...");
 	bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
+	bi.lParam = (LPARAM)initialPath;
 	bi.lpfn = BrowseCallbackProc;
 
 	LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
@@ -59,14 +60,14 @@ string CurrentPath() {
 }
 
 void set_global_path(string path) {
-	string strMapName("ShareMemory");                // ÄÚ´æÓ³Éä¶ÔÏóÃû³Æ
-	LPVOID pBuffer;                                  // ¹²ÏíÄÚ´æÖ¸Õë
+	string strMapName("ShareMemory");                // å†…å­˜æ˜ å°„å¯¹è±¡åç§°
+	LPVOID pBuffer;                                  // å…±äº«å†…å­˜æŒ‡é’ˆ
 
 	HANDLE hMap = ::OpenFileMapping(FILE_MAP_ALL_ACCESS, 0, strMapName.c_str());
-	// ´ò¿ªÊ§°Ü£¬´´½¨Ö®
+	// æ‰“å¼€å¤±è´¥ï¼Œåˆ›å»ºä¹‹
 	hMap = ::CreateFileMapping(INVALID_HANDLE_VALUE,NULL,PAGE_READWRITE,0, path.length() + 1,strMapName.c_str());
-	// Ó³Éä¶ÔÏóµÄÒ»¸öÊÓÍ¼£¬µÃµ½Ö¸Ïò¹²ÏíÄÚ´æµÄÖ¸Õë£¬ÉèÖÃÀïÃæµÄÊı¾İ
+	// æ˜ å°„å¯¹è±¡çš„ä¸€ä¸ªè§†å›¾ï¼Œå¾—åˆ°æŒ‡å‘å…±äº«å†…å­˜çš„æŒ‡é’ˆï¼Œè®¾ç½®é‡Œé¢çš„æ•°æ®
 	pBuffer = ::MapViewOfFile(hMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
 	strcpy((char*)pBuffer, path.c_str());
-	//cout << "Ğ´Èë¹²ÏíÄÚ´æÊı¾İ£º" << (char *)pBuffer << endl;
+	//cout << "å†™å…¥å…±äº«å†…å­˜æ•°æ®ï¼š" << (char *)pBuffer << endl;
 }
