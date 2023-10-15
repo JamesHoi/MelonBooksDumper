@@ -32,7 +32,7 @@ string get_global_path() {
 
 void __stdcall SaveImage(void* pic_addr, unsigned int length)
 {
-	sprintf(filename, "%03d.jpg", pic_count);
+	sprintf(filename, "%06d.jpg", pic_count);
 	string tmp = path + "\\" + string(filename);
 	FILE *fp = fopen(tmp.c_str(), "wb+");
 	fwrite(pic_addr, length, 1, fp);
