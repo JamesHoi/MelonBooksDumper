@@ -11,4 +11,4 @@ using namespace std;
 
 
 int getProcID(const string& p_name);
-bool InjectDLL(const int &pid, const string &DLL_Path);
+bool InjectDLL(const int &pid, const string &DLL_Path, HANDLE InjectionCompletionEventHandle);
