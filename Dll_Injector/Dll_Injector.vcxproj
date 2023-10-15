@@ -158,6 +158,7 @@
   <ItemGroup>
     <ClInclude Include="common.h" />
     <ClInclude Include="injector.h" />
+    <ClInclude Include="interprocess.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
