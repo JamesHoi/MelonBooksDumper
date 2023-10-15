@@ -27,9 +27,6 @@
     <ClInclude Include="detver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\Dll_Injector\interprocess.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

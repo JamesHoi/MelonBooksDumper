@@ -1,5 +1,4 @@
 #include"injector.h"
-#include "interprocess.h"
 
 //-----------------------------------------------------------
 // Get Process ID by its name
@@ -31,7 +30,7 @@ int getProcID(const string& p_name)
 //-----------------------------------------------------------
 // Inject DLL to target process
 //-----------------------------------------------------------
-bool InjectDLL(const int &pid, const string &DLL_Path, HANDLE InjectionCompletionEventHandle)
+bool InjectDLL(const int &pid, const string &DLL_Path)
 {
 	long dll_size = DLL_Path.length() + 1;
 	HANDLE hProc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
@@ -70,7 +69,6 @@ bool InjectDLL(const int &pid, const string &DLL_Path, HANDLE InjectionCompletio
 
 	if ((hProc != NULL) && (MyAlloc != NULL) && (IsWriteOK != ERROR_INVALID_HANDLE) && (ThreadReturn != NULL))
 	{
-		WaitForSingleObject(InjectionCompletionEventHandle, INFINITE);
 		cout << "[+]DLL Successfully Injected :)" << endl;
 		return true;
 	}
