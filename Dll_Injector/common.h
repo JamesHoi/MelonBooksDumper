@@ -1,4 +1,4 @@
-ï»¿#pragma once
+#pragma once
 #define _CRT_SECURE_NO_DEPRECATE
 #define _CRT_SECURE_NO_WARNING
 
@@ -8,7 +8,6 @@
 #include <shlobj.h>
 #include <iostream>
 #include <sstream>
-#include "interprocess.h"
 
 using namespace std;
 
@@ -60,14 +59,13 @@ string CurrentPath() {
 }
 
 void set_global_path(string path) {
-	string strMapName("ShareMemory");                // ï¾„ï¾šï½´è´Šï½³ï¾‰è¼ï¾”ï¾îŠ¶ï¨¤ï¾†
-	LPVOID pBuffer;                                  // ï½¹ï½²ï¾ï¤©ï¾šï½´è´ï½¸ï¾•ãƒ»
-
+	string strMapName("ShareMemory");                // ÄÚ´æÓ³Éä¶ÔÏóÃû³Æ
+	LPVOID pBuffer;                                  // ¹²ÏúàÚ´æÖ¸ÕE
 	HANDLE hMap = ::OpenFileMapping(FILE_MAP_ALL_ACCESS, 0, strMapName.c_str());
-	// æ‰“å¼€å¤±è´¥ï¼Œåˆ›å»ºä¹‹
+	// ´ò¿ªÊ§°Ü£¬´´½¨Ö®
 	hMap = ::CreateFileMapping(INVALID_HANDLE_VALUE,NULL,PAGE_READWRITE,0, path.length() + 1,strMapName.c_str());
-	// æ˜ å°„å¯¹è±¡çš„ä¸€ä¸ªè§†å›¾ï¼Œå¾—åˆ°æŒ‡å‘å…±äº«å†…å­˜çš„æŒ‡é’ˆï¼Œè®¾ç½®é‡Œé¢çš„æ•°æ®
+	// Ó³Éä¶ÔÏóµÄÒ»¸öÊÓÍ¼£¬µÃµ½Ö¸Ïò¹²ÏúàÚ´æµÄÖ¸ÕE¬ÉèÖÃÀEæµÄÊı¾İ
 	pBuffer = ::MapViewOfFile(hMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
 	strcpy((char*)pBuffer, path.c_str());
-	//cout << "å†™å…¥å…±äº«å†…å­˜æ•°æ®ï¼š" << (char *)pBuffer << endl;
+	//cout << "Ğ´ÈE²ÏúàÚ´æÊı¾İ£º" << (char *)pBuffer << endl;
 }
