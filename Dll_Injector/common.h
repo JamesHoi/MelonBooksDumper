@@ -23,13 +23,14 @@ static int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPAR
 	return 0;
 }
 
-string BrowseFolder()
+string BrowseFolder(const char* initialPath)
 {
 	TCHAR path[MAX_PATH];
 
 	BROWSEINFO bi = { 0 };
 	bi.lpszTitle = ("Browse for save folder...");
 	bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
+	bi.lParam = (LPARAM)initialPath;
 	bi.lpfn = BrowseCallbackProc;
 
 	LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
@@ -59,14 +60,14 @@ string CurrentPath() {
 }
 
 void set_global_path(string path) {
-	string strMapName("ShareMemory");                // 内存映射对象名称
-	LPVOID pBuffer;                                  // 共享内存指针
+	string strMapName("ShareMemory");                // Memory mapped object name
+	LPVOID pBuffer;                                  // Shared memory pointer
 
 	HANDLE hMap = ::OpenFileMapping(FILE_MAP_ALL_ACCESS, 0, strMapName.c_str());
-	// 打开失败，创建之
+	// Failed to open, create it
 	hMap = ::CreateFileMapping(INVALID_HANDLE_VALUE,NULL,PAGE_READWRITE,0, path.length() + 1,strMapName.c_str());
-	// 映射对象的一个视图，得到指向共享内存的指针，设置里面的数据
+	// Map a view of the object, get the pointer to the shared memory, and set the data inside
 	pBuffer = ::MapViewOfFile(hMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
 	strcpy((char*)pBuffer, path.c_str());
-	//cout << "写入共享内存数据：" << (char *)pBuffer << endl;
+	//cout << "Write shared memory data: " << (char *)pBuffer << endl;
 }
