@@ -8,6 +8,7 @@
 #include <Psapi.h> // To get process info
 #include <process.h>
 #include <stdlib.h>
+#include "../Dll_Injector/interprocess.h"
 
 #define AttachRVA_v110 0x205AF
 #define AttachRVA_v120 0x23FDF
@@ -144,11 +145,15 @@ BOOL APIENTRY DllMain( HMODULE hModule,
                        LPVOID lpReserved
                      )
 {
-    switch (ul_reason_for_call)
+	HANDLE InjectionCompletionEventHandle = NULL;
+	switch (ul_reason_for_call)
     {
     case DLL_PROCESS_ATTACH:
+		InjectionCompletionEventHandle = ::OpenEvent(EVENT_MODIFY_STATE, FALSE, INJECTION_COMPLETION_EVENT_NAME);
 		Init();
 		Attach();
+		SetEvent(InjectionCompletionEventHandle);
+		break;
     case DLL_THREAD_ATTACH:
     case DLL_THREAD_DETACH:
     case DLL_PROCESS_DETACH:
